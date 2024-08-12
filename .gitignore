@@ -1,0 +1,4 @@
+# Ignore Visual Studio temporary files, build results, and
+# Include directory-based exclusions
+obj/
+bin/
