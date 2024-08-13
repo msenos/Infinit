@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using System.Collections;
+using System.Diagnostics;
 
 namespace Infinit;
 
@@ -12,30 +13,41 @@ public class Program
 {
     private static readonly HttpClient client = new();
      private static readonly Dictionary<string, string> jsTsFiles = [];
-     private static Dictionary<char, int> alphabetDictionary = [];
+     private static readonly Dictionary<char, int> alphabetDictionary = [];
 
     public static async Task Main(string[] args)
     {
-        var token = "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";
+        var sw = new Stopwatch();
+        //Add missing token
+        var token = "";
         var owner = "lodash";
         var repo = "lodash";
-        // var alphabetDictionary = new Dictionary<string, int>();
 
+        sw.Start();
+
+        ConfigureHttpClient(token);
+
+        await GetFilesFromRepo(owner, repo, "");
+
+        sw.Stop();
+        PrinResults();
+        Console.WriteLine($"Execution time was {sw.Elapsed}");
+    }
+
+    private static void PrinResults()
+    {
+        foreach (var letter in alphabetDictionary.OrderByDescending(x => x.Value))
+        {
+            Console.WriteLine($"{letter.Key}: {letter.Value}");
+        }
+    }
+
+    private static void ConfigureHttpClient(string token)
+    {
         client.DefaultRequestHeaders.Accept.Clear();
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", token);
         client.DefaultRequestHeaders.UserAgent.TryParseAdd("InfinitApp");
-
-        var url = $"https://api.github.com/repos/{owner}/{repo}/contents";
-        var response = await client.GetAsync(url);
-        response.EnsureSuccessStatusCode();
-
-        await GetFilesFromRepo(owner, repo, "");
-
-        foreach(var letter in alphabetDictionary.OrderByDescending(x => x.Value))
-        {
-            Console.WriteLine($"{letter.Key}: {letter.Value}");
-        }
     }
 
     private static async Task GetFilesFromRepo(string owner, string repo, string path)
@@ -78,11 +90,8 @@ public class Program
         using var memoryStream = new MemoryStream(decodedContent);
         using var reader = new StreamReader(memoryStream);
         var content = reader.ReadToEnd();
-        // Console.WriteLine(content);
         
         CalculateNumberOfLetters(content);
-
-        
     }
 
     private static void CalculateNumberOfLetters(string? content){
@@ -93,33 +102,35 @@ public class Program
 
     private static void AddToCorrectKey(char v)
     {
-        switch(v){
-            case 'a': IncrementValue(v); break;
-            case 'b': IncrementValue(v); break;
-            case 'c': IncrementValue(v); break;
-            case 'd': IncrementValue(v); break;
-            case 'e': IncrementValue(v); break;
-            case 'f': IncrementValue(v); break;
-            case 'g': IncrementValue(v); break;
-            case 'h': IncrementValue(v); break;
-            case 'i': IncrementValue(v); break;
-            case 'j': IncrementValue(v); break;
-            case 'k': IncrementValue(v); break;
-            case 'l': IncrementValue(v); break;
-            case 'm': IncrementValue(v); break;
-            case 'n': IncrementValue(v); break;
-            case 'o': IncrementValue(v); break;
-            case 'p': IncrementValue(v); break;
-            case 'q': IncrementValue(v); break;
-            case 'r': IncrementValue(v); break;
-            case 's': IncrementValue(v); break;
-            case 't': IncrementValue(v); break;
-            case 'u': IncrementValue(v); break;
-            case 'v': IncrementValue(v); break;
-            case 'w': IncrementValue(v); break;
-            case 'x': IncrementValue(v); break;
-            case 'y': IncrementValue(v); break;
-            case 'z': IncrementValue(v); break;
+        var lowerCase = Char.ToLower(v);
+
+        switch(lowerCase){
+            case 'a': IncrementValue(lowerCase); break;
+            case 'b': IncrementValue(lowerCase); break;
+            case 'c': IncrementValue(lowerCase); break;
+            case 'd': IncrementValue(lowerCase); break;
+            case 'e': IncrementValue(lowerCase); break;
+            case 'f': IncrementValue(lowerCase); break;
+            case 'g': IncrementValue(lowerCase); break;
+            case 'h': IncrementValue(lowerCase); break;
+            case 'i': IncrementValue(lowerCase); break;
+            case 'j': IncrementValue(lowerCase); break;
+            case 'k': IncrementValue(lowerCase); break;
+            case 'l': IncrementValue(lowerCase); break;
+            case 'm': IncrementValue(lowerCase); break;
+            case 'n': IncrementValue(lowerCase); break;
+            case 'o': IncrementValue(lowerCase); break;
+            case 'p': IncrementValue(lowerCase); break;
+            case 'q': IncrementValue(lowerCase); break;
+            case 'r': IncrementValue(lowerCase); break;
+            case 's': IncrementValue(lowerCase); break;
+            case 't': IncrementValue(lowerCase); break;
+            case 'u': IncrementValue(lowerCase); break;
+            case 'v': IncrementValue(lowerCase); break;
+            case 'w': IncrementValue(lowerCase); break;
+            case 'x': IncrementValue(lowerCase); break;
+            case 'y': IncrementValue(lowerCase); break;
+            case 'z': IncrementValue(lowerCase); break;
             default: break;
         }
     }
